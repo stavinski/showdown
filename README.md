@@ -1,4 +1,4 @@
-# Showdown.py
+# SHOWDOWN
 
 ## Summary
 
@@ -7,7 +7,7 @@ Tool that can allows (tailored) juicy information to be retrieved from shodan fo
 ## Usage
 
 ```
-usage: showdown.py [-h] [-f FILE] [-n NETWORK] [-kf KEY_FILE] [-p {info,vulns} [{info,vulns} ...]] [-v] [-V] [-t THREADS]
+usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {info,vulns} [{info,vulns} ...]] [--verbose] [--version] [--threads THREADS]
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -23,16 +23,16 @@ usage: showdown.py [-h] [-f FILE] [-n NETWORK] [-kf KEY_FILE] [-p {info,vulns} [
 
 optional arguments:
   -h, --help            show this help message and exit
-  -f FILE, --file FILE  Hosts file, can be either hostname or IP address.
-  -n NETWORK, --network NETWORK
+  --file FILE, -f FILE  Hosts file, can be either hostname or IP address.
+  --network NETWORK, --n NETWORK
                         Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
-  -kf KEY_FILE, --key-file KEY_FILE
+  --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
-  -p {info,vulns} [{info,vulns} ...], --plugins {info,vulns} [{info,vulns} ...]
+  --plugins {info,vulns} [{info,vulns} ...], -p {info,vulns} [{info,vulns} ...]
                         Plugins to run, defaults to info vulns.
-  -v, --verbose         Increase the logging verbosity.
-  -V, --version         show program's version number and exit
-  -t THREADS, --threads THREADS
+  --verbose, -v         Increase the logging verbosity.
+  --version, -V         show program's version number and exit
+  --threads THREADS, -t THREADS
                         Number of threads to use for retrieving hosts. Defaults to 10
 ```
 

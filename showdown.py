@@ -123,13 +123,13 @@ if __name__ == '__main__':
             prog='showdown.py',
             formatter_class=RawDescriptionHelpFormatter,
             description=desc)
-    parser.add_argument('-f', '--file', help='Hosts file, can be either hostname or IP address.')
-    parser.add_argument('-n', '--network', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
-    parser.add_argument('-kf', '--key-file', help='Shodan API key file, if not provided then API key will be prompted for.')
-    parser.add_argument('-p', '--plugins', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=AVAILABLE_PLUGINS)
-    parser.add_argument('-v', '--verbose', action='count', help='Increase the logging verbosity.', default=0)
-    parser.add_argument('-V', '--version', action='version', version=__VERSION__)
-    parser.add_argument('-t', '--threads', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
+    parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
+    parser.add_argument('--network', '--n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
+    parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
+    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=AVAILABLE_PLUGINS)
+    parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
+    parser.add_argument('--version','-V', action='version', version=__VERSION__)
+    parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
 
     args = parser.parse_args()
 
