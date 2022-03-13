@@ -9,8 +9,8 @@ class Console(object):
         Severity.CRITICAL: ('white', 'on_red'),
         Severity.HIGH: ('red', None),
         Severity.MEDIUM: ('yellow', None),
-        Severity.LOW: ('cyan', None),
-        Severity.INFO: ('blue', None),
+        Severity.LOW: ('green', None),
+        Severity.INFO: ('cyan', None),
     }
 
 

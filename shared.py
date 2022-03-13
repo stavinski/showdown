@@ -17,6 +17,16 @@ class Severity(Enum):
     HIGH = 7
     CRITICAL = 10
 
+    @classmethod
+    def all(cls):
+        return [
+            cls.CRITICAL,
+            cls.HIGH,
+            cls.MEDIUM,
+            cls.LOW,
+            cls.INFO
+        ]
+
 
 class PipelineState(object):
 
