@@ -58,3 +58,15 @@ class Plugin(AbstractPlugin):
 ```
 3. That is all that is needed for the plugin to be registered with showdown.py. When you run the `--help` you should see the plugin has been added to the `--plugins` argument.
 4. To use the plugin simply add it into the list of plugins, `python3 showdown.py --key-file shodan.key --plugins vulns cloud ...`
+
+## TODO
+
+- [ ] Threading support for API calls
+- [ ] Common Data Structure for results
+- [ ] Plugin: Cloud
+- [ ] Plugin: SSL
+- [ ] Plugin: Uncommon Ports
+- [ ] Plugin: WAF
+- [ ] Plugin: Certs
+- [ ] Plugin: Screens
+
