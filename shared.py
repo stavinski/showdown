@@ -1,5 +1,5 @@
 
-from abc import abstractmethod
+from abc import abstractmethod, abstractproperty
 from enum import Enum
 
 class Issue(object):
@@ -34,21 +34,26 @@ class PipelineState(object):
 class Pipeline(object):
     
     def __init__(self):
-        self.filters = []
+        self.plugins = []
         self.state = PipelineState()
 
-    def add_filter(self, filter):
-        self.filters.append(filter)
+    def add_plugin(self, plugin):
+        self.plugins.append(plugin)
 
     def execute(self, host):
-        for filter in self.filters:
-            filter.process(host, self.state)
+        for plugin in self.plugins:
+            plugin.process(host, self.state)
         
         return self.state
 
 
-class Filter(object):
+class AbstractPlugin(object):
 
     @abstractmethod
     def process(self, host, state):
         raise NotImplementedError()
+
+    @abstractproperty
+    def summary(self):
+        raise NotImplementedError()
+

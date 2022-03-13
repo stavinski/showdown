@@ -1,6 +1,5 @@
 
 from termcolor import cprint
-
 from shared import Severity
 
 
@@ -13,6 +12,7 @@ class Console(object):
         Severity.LOW: ('cyan', None),
         Severity.INFO: ('blue', None),
     }
+
 
     def echo(self, severity, val):
         fg, bg = Console.COLORS[severity]

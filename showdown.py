@@ -1,63 +1,35 @@
 #!/usr/bin/env python3
 
-from os import stat
+
+import pathlib
+import pkgutil
 from termcolor import cprint, colored
 from ipaddress import ip_address
 from socket import gethostbyname_ex
 from shodan import Shodan, Shodan
 from shodan.exception import APIError
-from argparse import ArgumentParser
+from argparse import ArgumentParser, RawDescriptionHelpFormatter, RawTextHelpFormatter
 from getpass import getpass
 
-from shared import Severity, Filter, Pipeline
+from shared import Pipeline
 from console import Console
 
-import json
-
-class InfoFilter(Filter):
-
-    def process(self, host, state):
-        if host['os']:
-            state.add_issue(Severity.INFO, f"OS: {host['os']}")
-
-        state.add_issue(Severity.INFO, f"Last Updated: {host['last_update']}")
+import importlib
+import plugins
 
 
-class VulnsFilter(Filter):
 
-    def process(self, host, state):
-        if host['vulns']:
-            total = len(host['vulns'])
-            state.add_issue(Severity.HIGH, f"Found {total} vulnerabilities")
-            state.increase_score(500)
+__VERSION__ = '0.1.0'
+__AUTHOR__ = 'Mike Cromwell'
 
-        for data in host['data']:
-            if 'vulns' not in data:
-                continue
 
-            for key, vuln in data['vulns'].items():
-                cvss = float(vuln['cvss'])
-                severity = self.map_severity(cvss)
-                state.increase_score(severity.value * 100)
-                additional = { 'verified': vuln['verified'], 'references': vuln['references'] }
-                state.add_issue(severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
+# find plugins that are available
+AVAILABLE_PLUGINS = [name for finder, name, ispkg in pkgutil.iter_modules(plugins.__path__)]
+LOADED_PLUGINS = { plugin: importlib.import_module(f"plugins.{plugin}",'plugins').Plugin() for plugin in AVAILABLE_PLUGINS}
 
-    def map_severity(self, cvss):
-        mappings = [
-            (0.0, 0.0, Severity.INFO),
-            (1.0, 3.9, Severity.LOW),
-            (4.0, 6.9, Severity.MEDIUM),
-            (7.0, 9.9, Severity.HIGH),
-            (10.0, 10.0, Severity.CRITICAL)
-        ]
-
-        if cvss < 0 or cvss > 10:
-            raise ValueError(f"CVSS score {cvss} was invalid, value needs to be between 0 and 10.")
-
-        for lower, upper, severity in mappings:
-            if cvss >= lower and cvss <= upper:
-                return severity
-
+def build_plugins(plugins):
+    for plugin in plugin:
+        yield LOADED_PLUGINS[plugin]
 
 def main(args):
     api_key = None
@@ -90,30 +62,60 @@ def main(args):
         
     print(f"[+] Resolved ips: {','.join(ips)}")
 
-    host = api.host('x.x.x.x')
+    host = api.host('81.27.104.119')
 
     pipeline = Pipeline()
-    filters = [InfoFilter(), VulnsFilter()]
     console = Console()
+    plugins = build_plugins(args.plugins)
 
-    for filter in filters:
-        pipeline.add_filter(filter)
+    print(f"[*] Using plugins: {','.join(args.plugins)}")
+
+    for plugin in plugins:
+        pipeline.add_plugin(plugin)
     
     state = pipeline.execute(host)
+    cprint("="* 100, 'magenta')
+    cprint(f"Results for: {host['ip_str']}", 'magenta')
+    cprint("="* 100, 'magenta')
     for issue in state.issues:
         console.echo(issue.severity, '\t' + issue.desc)
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('Showdown - Performs shodan query on hosts to point out potential findings and focus on places to look, handy to get a head start for external assessments!')
+    logo = colored("""       
+███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
+██╔════╝██║  ██║██╔═══██╗██║    ██║██╔══██╗██╔═══██╗██║    ██║████╗  ██║
+███████╗███████║██║   ██║██║ █╗ ██║██║  ██║██║   ██║██║ █╗ ██║██╔██╗ ██║
+╚════██║██╔══██║██║   ██║██║███╗██║██║  ██║██║   ██║██║███╗██║██║╚██╗██║
+███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
+╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
+""", 'red')
+
+    desc = logo + colored(f"""
+    {__VERSION__} {__AUTHOR__}
+    """, 'yellow')
+
+    desc += colored("""Pull back juicy info on external targets from shodan!
+""", 'green')
+    
+    parser = ArgumentParser(
+            prog='showdown.py',
+            formatter_class=RawDescriptionHelpFormatter,
+            description=desc)
     parser.add_argument('-f', '--file', help='Hosts file, can be either hostname or IP address.')
     parser.add_argument('-n', '--network', help='Network range to search using CIDR notation (13.77.161.0/22).')
     parser.add_argument('-kf', '--key-file', help='Shodan API key file, if not provided then API key will be prompted for.')
+    parser.add_argument('-p', '--plugins', help='Plugins to run as comma separated list, defaults to info,vulns.', type=list, default=['info', 'vulns'], choices=AVAILABLE_PLUGINS)
+    parser.add_argument('-v', '--verbose', action='count', help='Increase the logging verbosity.', default=0)
+    parser.add_argument('-V', '--version', action='version', version=__VERSION__)
 
     args = parser.parse_args()
 
     if not args.file and not args.network:
         raise SystemExit(colored('[!] Must provide either a file or network to search against, see usage with -h.', 'red'))
+
+    if len(args.plugins) <= 0:
+        raise SystemExit(colored('[!] No plugins provided.'))
 
     try:
         main(args)
