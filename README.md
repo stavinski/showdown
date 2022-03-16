@@ -61,7 +61,8 @@ class Plugin(AbstractPlugin):
 
 ## TODO
 
-- [ ] Threading support for API calls
+- [*] List plugins
+- [*] Tidy up queueing and threading
 - [ ] Common Data Structure for results
 - [ ] Plugin: Cloud
 - [ ] Plugin: SSL
