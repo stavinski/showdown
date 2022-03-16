@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
+from queue import Queue
+from re import T
+import sys
+import threading
+from time import sleep
 from termcolor import cprint, colored
 from ipaddress import ip_address, ip_network
 from socket import gethostbyname_ex
-from shodan import Shodan, Shodan
-from shodan.exception import APIError
 from argparse import ArgumentParser, RawDescriptionHelpFormatter, RawTextHelpFormatter
 from getpass import getpass
 from shared import Pipeline, Severity
+from plugin import PluginRegistry
 from console import Console
+from shodanapi import ShodanAPI
 
 import importlib
 import pkgutil
@@ -17,24 +22,19 @@ import plugins
 
 __VERSION__ = '0.1.0'
 __AUTHOR__ = 'Mike Cromwell'
-
-
-# find plugins that are available
-AVAILABLE_PLUGINS = [name for finder, name, ispkg in pkgutil.iter_modules(plugins.__path__)]
-LOADED_PLUGINS = { plugin: importlib.import_module(f"plugins.{plugin}",'plugins').Plugin() for plugin in AVAILABLE_PLUGINS}
-
-def build_plugins(plugins):
-    for plugin in plugins:
-        yield LOADED_PLUGINS[plugin]
-
-def test_shodan(api):
-    try:
-        info = api.info()
-        cprint("[*] Successful Shodan call.", 'green')
-        cprint(f"[*] {info}", 'blue')
-    except APIError as e:
-        raise SystemExit(colored(f"[!] Error calling Shodan: '{e}'.", 'red'))
-
+__LOGO__ = colored("""       
+███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
+██╔════╝██║  ██║██╔═══██╗██║    ██║██╔══██╗██╔═══██╗██║    ██║████╗  ██║
+███████╗███████║██║   ██║██║ █╗ ██║██║  ██║██║   ██║██║ █╗ ██║██╔██╗ ██║
+╚════██║██╔══██║██║   ██║██║███╗██║██║  ██║██║   ██║██║███╗██║██║╚██╗██║
+███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
+╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
+""", 'red')
+__BANNER__ = __LOGO__ + colored(f"""
+    {__VERSION__} {__AUTHOR__}
+    """, 'yellow')
+__BANNER__ += colored("""Pull back juicy info on external targets from shodan!
+""", 'green')
 
 def get_api_key(args):
     if args.key_file:
@@ -71,67 +71,99 @@ def retrieve_ips(args):
     return ips
 
 
+def download_host(api, queue, results):
+    while True:
+        ip = queue.get()
+        try:
+            success, ip, result = api.host(ip)
+            if success:
+                results.append(result)
+                print(colored('+', 'green'), end='', flush=True)
+            else:
+                print(colored('-', 'red'), end='', flush=True)
+        finally:
+            queue.task_done()
+
+
 def main(args):
     console = Console()
+    plugin_reg = PluginRegistry()
+    print(__BANNER__)
+    print('[*] Starting up')
+    
     api_key = get_api_key(args)
     ips = retrieve_ips(args)
-    api = Shodan(api_key)
-    test_shodan(api)
+    api = ShodanAPI(api_key)
+    print('[*] Testing shodan')
+    success, result = api.test()
+    if success:
+        cprint("[*] Successful Shodan call.", 'green')
+        cprint(f"[*] {result}", 'blue')
+    else:
+        raise SystemExit(colored(f"[!] Error calling Shodan: '{result}'.", 'red'))
 
-    print(f"[+] Resolved ips: {','.join(ips)}")
-
-    host = api.host('81.27.104.119')
-
-    print('[*] Issue Key:')
-    for severity in Severity.all():
-        console.echo(severity, severity.name)
-
+    print(f"[+] IPs: {','.join(ips)}")
+    
     pipeline = Pipeline()
-    plugins = build_plugins(args.plugins)
+    plugins = plugin_reg.retrieve_plugins(args.plugins)
 
     print(f"[*] Using plugins: {' '.join(args.plugins)}")
 
     for plugin in plugins:
         pipeline.add_plugin(plugin)
+
+    num_hosts = len(ips)
+    work_queue = Queue(num_hosts)
+    results = []
+    for count in range(0, args.threads):
+        t = threading.Thread(target=download_host, name=f'downloader-{count}', args=(api, work_queue, results))
+        t.setDaemon(True)
+        t.start()
     
-    state = pipeline.execute(host)
-    cprint("="* 100, 'magenta')
-    cprint(f"Host: {host['ip_str']}", 'magenta')
-    cprint("="* 100, 'magenta')
-    for issue in state.issues:
-        console.echo(issue.severity, '\t' + issue.desc)
-
-
-if __name__ == '__main__':
-    logo = colored("""       
-███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
-██╔════╝██║  ██║██╔═══██╗██║    ██║██╔══██╗██╔═══██╗██║    ██║████╗  ██║
-███████╗███████║██║   ██║██║ █╗ ██║██║  ██║██║   ██║██║ █╗ ██║██╔██╗ ██║
-╚════██║██╔══██║██║   ██║██║███╗██║██║  ██║██║   ██║██║███╗██║██║╚██╗██║
-███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
-╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
-""", 'red')
-
-    desc = logo + colored(f"""
-    {__VERSION__} {__AUTHOR__}
-    """, 'yellow')
-
-    desc += colored("""Pull back juicy info on external targets from shodan!
-""", 'green')
+    cprint('[+] Details', 'green')
+    cprint('[-] No details', 'red')
     
-    parser = ArgumentParser(
-            prog='showdown.py',
-            formatter_class=RawDescriptionHelpFormatter,
-            description=desc)
+    print(f"[+] Processing {num_hosts} hosts: ", end='', flush=True)
+    for ip in ips:
+        work_queue.put(ip)
+        sleep(1)  # shodan API is rate limited to 1req/sec so leave a 1 sec gap between pushing the work onto the queue
+
+    work_queue.join()
+    print()
+
+    for host in results:
+        state = pipeline.execute(host)
+        cprint("="* 100, 'magenta')
+        cprint(f"Host: {ip}", 'magenta')
+        cprint("="* 100, 'magenta')
+        for issue in state.issues:
+            console.echo(issue.severity, '\t' + issue.desc)
+
+
+
+
+if __name__ == '__main__':   
+    parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
     parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
     parser.add_argument('--network', '--n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
-    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=AVAILABLE_PLUGINS)
+    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
     parser.add_argument('--version','-V', action='version', version=__VERSION__)
     parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
+    parser.add_argument('--list-plugins', '-lp', help='Lists plugins available.', action='store_true')
 
     args = parser.parse_args()
+
+    if args.list_plugins:
+        print(__BANNER__)
+        print('[*] Available plugins:')
+        plugin_reg = PluginRegistry()
+        for name, summary in plugin_reg.list():
+            cprint(f"[{name}]: {summary}", 'blue')
+        
+        print('[+] Use with --plugins <plugin1> <plugin2> ...')
+        sys.exit()
 
     if not args.file and not args.network:
         raise SystemExit(colored('[!] Must provide either a file or network to search against, see usage with -h.', 'red'))
