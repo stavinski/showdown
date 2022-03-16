@@ -22,7 +22,7 @@ class Plugin(AbstractPlugin):
             for key, vuln in data['vulns'].items():
                 cvss = float(vuln['cvss'])
                 severity = self.map_severity(cvss)
-                state.increase_score(host, severity.value * 100)
+                state.increase_score(host, cvss * 100)
                 additional = { 'verified': vuln['verified'], 'references': vuln['references'] }
                 state.add_issue(host, severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
 
