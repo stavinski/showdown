@@ -8,10 +8,12 @@ class Plugin(AbstractPlugin):
         return 'Details of any vulnerabilities for the host'
 
     def process(self, host, state):
-        if host['vulns']:
+        if 'vulns' in host and host['vulns']:
             total = len(host['vulns'])
             state.add_issue(Severity.HIGH, f"Found {total} vulnerabilities")
             state.increase_score(500)
+        else:
+            return
 
         for data in host['data']:
             if 'vulns' not in data:
@@ -23,6 +25,7 @@ class Plugin(AbstractPlugin):
                 state.increase_score(severity.value * 100)
                 additional = { 'verified': vuln['verified'], 'references': vuln['references'] }
                 state.add_issue(severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
+
 
     def map_severity(self, cvss):
         mappings = [
