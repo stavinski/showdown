@@ -28,17 +28,32 @@ class Severity(Enum):
         ]
 
 
-class PipelineState(object):
-
+class Host(object):
     def __init__(self):
         self.score = 0
         self.issues = []
 
-    def increase_score(self, val):
-        self.score += val
 
-    def add_issue(self, severity, desc, additional={}):
-        self.issues.append(Issue(severity, desc, additional=additional))
+class PipelineState(object):
+
+    def __init__(self):
+        self.hosts = {}
+
+    def increase_score(self, host, val):
+        host = self._get_or_create(host)
+        host.score += val
+
+    def add_issue(self, host, severity, desc, additional={}):
+        host = self._get_or_create(host)
+        host.issues.append(Issue(severity, desc, additional=additional))
+
+    def _get_or_create(self, host):
+        ip = host['ip_str']
+        if ip in self.hosts:
+            return self.hosts[ip]
+        
+        self.hosts[ip] = Host()
+        return self.hosts[ip]
 
 
 class Pipeline(object):

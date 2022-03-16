@@ -10,8 +10,8 @@ class Plugin(AbstractPlugin):
     def process(self, host, state):
         if 'vulns' in host and host['vulns']:
             total = len(host['vulns'])
-            state.add_issue(Severity.HIGH, f"Found {total} vulnerabilities")
-            state.increase_score(500)
+            state.add_issue(host, Severity.HIGH, f"Found {total} vulnerabilities")
+            state.increase_score(host, 500)
         else:
             return
 
@@ -22,9 +22,9 @@ class Plugin(AbstractPlugin):
             for key, vuln in data['vulns'].items():
                 cvss = float(vuln['cvss'])
                 severity = self.map_severity(cvss)
-                state.increase_score(severity.value * 100)
+                state.increase_score(host, severity.value * 100)
                 additional = { 'verified': vuln['verified'], 'references': vuln['references'] }
-                state.add_issue(severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
+                state.add_issue(host, severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
 
 
     def map_severity(self, cvss):

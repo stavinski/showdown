@@ -5,9 +5,9 @@ class Plugin(AbstractPlugin):
 
     def process(self, host, state):
         if host['os']:
-            state.add_issue(Severity.INFO, f"OS: {host['os']}")
+            state.add_issue(host, Severity.INFO, f"OS: {host['os']}")
 
-        state.add_issue(Severity.INFO, f"Last Updated: {host['last_update']}")
+        state.add_issue(host, Severity.INFO, f"Last Updated: {host['last_update']}")
 
     @property
     def summary(self):

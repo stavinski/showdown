@@ -15,10 +15,6 @@ from plugin import PluginRegistry
 from console import Console
 from shodanapi import ShodanAPI
 
-import importlib
-import pkgutil
-import plugins
-
 
 __VERSION__ = '0.1.0'
 __AUTHOR__ = 'Mike Cromwell'
@@ -114,9 +110,9 @@ def main(args):
 
     num_hosts = len(ips)
     work_queue = Queue(num_hosts)
-    results = []
+    hosts = []
     for count in range(0, args.threads):
-        t = threading.Thread(target=download_host, name=f'downloader-{count}', args=(api, work_queue, results))
+        t = threading.Thread(target=download_host, name=f'downloader-{count}', args=(api, work_queue, hosts))
         t.setDaemon(True)
         t.start()
     
@@ -131,14 +127,23 @@ def main(args):
     work_queue.join()
     print()
 
-    for host in results:
-        state = pipeline.execute(host)
-        cprint("="* 100, 'magenta')
-        cprint(f"Host: {ip}", 'magenta')
-        cprint("="* 100, 'magenta')
-        for issue in state.issues:
-            console.echo(issue.severity, '\t' + issue.desc)
+    # no details for any of the hosts, nothing more to do!
+    if not hosts:
+        cprint('[!] No hosts with details', 'red')
+        return
 
+    # process the hosts through the plugins
+    for host in hosts:
+        ip = host['ip_str']
+        state = pipeline.execute(host)
+
+
+    for ip, host in state.hosts.items():
+        cprint("="* 100, 'magenta')
+        cprint(f"Host: {ip} - https://www.shodan.io/host/{ip}", 'magenta')
+        cprint("="* 100, 'magenta')
+        for issue in host.issues:
+            console.echo(issue.severity, '\t' + issue.desc)
 
 
 
