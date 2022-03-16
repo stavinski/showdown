@@ -61,8 +61,8 @@ class Plugin(AbstractPlugin):
 
 ## TODO
 
-- [*] List plugins
-- [*] Tidy up queueing and threading
+- [x] List plugins
+- [ ] Tidy up queueing and threading
 - [ ] Common Data Structure for results
 - [ ] Plugin: Cloud
 - [ ] Plugin: SSL
