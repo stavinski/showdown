@@ -56,7 +56,7 @@ class Plugin(AbstractPlugin):
     def summary(self):
         return 'Cloud details about the host'
 ```
-3. That is all that is needed for the plugin to be registered with showdown.py. When you run the `--help` you should see the plugin has been added to the `--plugins` argument.
+3. That is all that is needed for the plugin to be registered with showdown.py. When you run the `--list-plugins` you should see the plugin has been added to the list.
 4. To use the plugin simply add it into the list of plugins, `python3 showdown.py --key-file shodan.key --plugins vulns cloud ...`
 
 ## TODO
