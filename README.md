@@ -64,6 +64,7 @@ class Plugin(AbstractPlugin):
 - [x] List plugins
 - [ ] Tidy up queueing and threading
 - [ ] Common Data Structure for results
+- [ ] Sorting hosts based off score
 - [ ] Plugin: Cloud
 - [ ] Plugin: SSL
 - [ ] Plugin: Uncommon Ports
