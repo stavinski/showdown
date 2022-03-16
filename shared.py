@@ -62,7 +62,7 @@ class Pipeline(object):
         self.plugins = []
         self.state = PipelineState()
 
-    def add_plugin(self, plugin):
+    def register(self, plugin):
         self.plugins.append(plugin)
 
     def execute(self, host):

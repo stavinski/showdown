@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-from queue import Queue
-from re import T
 import sys
-import threading
-from time import sleep
 from termcolor import cprint, colored
 from ipaddress import ip_address, ip_network
 from socket import gethostbyname_ex
-from argparse import ArgumentParser, RawDescriptionHelpFormatter, RawTextHelpFormatter
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from getpass import getpass
-from shared import Pipeline, Severity
+from download import Downloader
+from shared import Pipeline
 from plugin import PluginRegistry
 from console import Console
 from shodanapi import ShodanAPI
@@ -67,23 +64,19 @@ def retrieve_ips(args):
     return ips
 
 
-def download_host(api, queue, results):
-    while True:
-        ip = queue.get()
-        try:
-            success, ip, result = api.host(ip)
-            if success:
-                results.append(result)
-                print(colored('+', 'green'), end='', flush=True)
-            else:
-                print(colored('-', 'red'), end='', flush=True)
-        finally:
-            queue.task_done()
+def ip_processed(has_details):
+    if has_details:
+        cprint('+', 'green', end='', flush=True)
+    else:
+        cprint('-', 'red', end='', flush=True)
 
 
 def main(args):
     console = Console()
     plugin_reg = PluginRegistry()
+    pipeline = Pipeline()
+    plugins = plugin_reg.retrieve_plugins(args.plugins)
+
     print(__BANNER__)
     print('[*] Starting up')
     
@@ -99,32 +92,17 @@ def main(args):
         raise SystemExit(colored(f"[!] Error calling Shodan: '{result}'.", 'red'))
 
     print(f"[+] IPs: {','.join(ips)}")
-    
-    pipeline = Pipeline()
-    plugins = plugin_reg.retrieve_plugins(args.plugins)
-
-    print(f"[*] Using plugins: {' '.join(args.plugins)}")
+    print(f"[+] Plugins: {' '.join(args.plugins)}")
 
     for plugin in plugins:
-        pipeline.add_plugin(plugin)
+        pipeline.register(plugin)
 
-    num_hosts = len(ips)
-    work_queue = Queue(num_hosts)
-    hosts = []
-    for count in range(0, args.threads):
-        t = threading.Thread(target=download_host, name=f'downloader-{count}', args=(api, work_queue, hosts))
-        t.setDaemon(True)
-        t.start()
-    
-    cprint('[+] Details', 'green')
+    cprint('[+] Details', 'green', end=' ')
     cprint('[-] No details', 'red')
-    
-    print(f"[+] Processing {num_hosts} hosts: ", end='', flush=True)
-    for ip in ips:
-        work_queue.put(ip)
-        sleep(1)  # shodan API is rate limited to 1req/sec so leave a 1 sec gap between pushing the work onto the queue
+    print(f"[+] Processing {len(ips)} hosts: ", end='', flush=True)
 
-    work_queue.join()
+    downloader = Downloader(api, args.threads, ips)
+    hosts = downloader.download(processed_callback=ip_processed)
     print()
 
     # no details for any of the hosts, nothing more to do!
@@ -137,14 +115,12 @@ def main(args):
         ip = host['ip_str']
         state = pipeline.execute(host)
 
-
     for ip, host in state.hosts.items():
         cprint("="* 100, 'magenta')
         cprint(f"Host: {ip} - https://www.shodan.io/host/{ip}", 'magenta')
         cprint("="* 100, 'magenta')
         for issue in host.issues:
             console.echo(issue.severity, '\t' + issue.desc)
-
 
 
 if __name__ == '__main__':   
