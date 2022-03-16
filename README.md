@@ -7,7 +7,7 @@ Tool that can allows (tailored) juicy information to be retrieved from shodan fo
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {info,vulns} [{info,vulns} ...]] [--verbose] [--version] [--threads THREADS]
+usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {info,vulns} [{info,vulns} ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins]
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -34,6 +34,7 @@ optional arguments:
   --version, -V         show program's version number and exit
   --threads THREADS, -t THREADS
                         Number of threads to use for retrieving hosts. Defaults to 10
+  --list-plugins, -lp   Lists plugins available.
 ```
 
 ## Plugins
@@ -71,4 +72,5 @@ class Plugin(AbstractPlugin):
 - [ ] Plugin: WAF
 - [ ] Plugin: Certs
 - [ ] Plugin: Screens
+- [ ] Wire up verbosity
 
