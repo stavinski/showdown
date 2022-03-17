@@ -1,13 +1,21 @@
 
-from shared import AbstractPlugin, Severity
+from datetime import datetime 
+from shared import AbstractPlugin
 
 class Plugin(AbstractPlugin):
 
-    def process(self, host, state):
+    def process(self, host, output):
         if host['os']:
-            state.add_issue(host, Severity.INFO, f"OS: {host['os']}")
+            output.add_info({ 
+                'id': 'os_id',
+                'description': f"OS: {host['os']}"
+            })
 
-        state.add_issue(host, Severity.INFO, f"Last Updated: {host['last_update']}")
+        last_updated = datetime.strptime(host['last_update'], '%Y-%m-%dT%H:%M:%S.%f')
+        output.add_info({
+            'id': 'last_updated',
+            'description': f"Last Updated: {last_updated:%Y-%m-%d %H:%M}"
+        })
 
     @property
     def summary(self):

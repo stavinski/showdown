@@ -1,14 +1,7 @@
 
 from abc import abstractmethod, abstractproperty
 from enum import Enum
-
-class Issue(object):
-    
-    def __init__(self, severity, desc, additional={}):
-        self.severity = severity
-        self.desc = desc
-        self.additional = additional
-
+from multiprocessing import set_forkserver_preload
 
 class Severity(Enum):
     INFO = 1
@@ -27,6 +20,13 @@ class Severity(Enum):
             cls.INFO
         ]
 
+class Finding(object):
+    
+    def __init__(self, severity, desc, additional={}):
+        self.severity = severity
+        self.desc = desc
+        self.additional = additional
+
 
 class Host(object):
     def __init__(self):
@@ -34,48 +34,46 @@ class Host(object):
         self.issues = []
 
 
-class PipelineState(object):
+class PipelineHostOutput(object):
 
     def __init__(self):
-        self.hosts = {}
+        self.host = { 'score': 0, 'findings': [], 'infos': [] }
 
-    def increase_score(self, host, val):
-        host = self._get_or_create(host)
-        host.score += val
+    def increase_score(self, val):
+        self.host['score'] += val
 
-    def add_issue(self, host, severity, desc, additional={}):
-        host = self._get_or_create(host)
-        host.issues.append(Issue(severity, desc, additional=additional))
+    def add_info(self, info):
+        self.host['infos'].append(info)
 
-    def _get_or_create(self, host):
-        ip = host['ip_str']
-        if ip in self.hosts:
-            return self.hosts[ip]
-        
-        self.hosts[ip] = Host()
-        return self.hosts[ip]
-
+    def add_finding(self, finding):
+        self.host['findings'].append(finding)
+    
 
 class Pipeline(object):
     
     def __init__(self):
         self.plugins = []
-        self.state = PipelineState()
+        self.output = {}
 
     def register(self, plugin):
         self.plugins.append(plugin)
 
     def execute(self, host):
+        # give the plugin a helper object to work against
+        output = PipelineHostOutput()
+
         for plugin in self.plugins:
-            plugin.process(host, self.state)
+            plugin.process(host, output)
         
-        return self.state
+        # now store the host output against the ip
+        self.output[host['ip_str']] = output.host
+        return self.output
 
 
 class AbstractPlugin(object):
 
     @abstractmethod
-    def process(self, host, state):
+    def process(self, host, output):
         raise NotImplementedError()
 
     @abstractproperty

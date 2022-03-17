@@ -112,16 +112,18 @@ def main(args):
 
     # process the hosts through the plugins
     for host in hosts:
-        ip = host['ip_str']
-        state = pipeline.execute(host)
+        output = pipeline.execute(host)
 
-    for ip, host in state.hosts.items():
+    for ip, host in output.items():
         cprint("="* 100, 'magenta')
-        cprint(f"Host: {ip} - https://www.shodan.io/host/{ip}", 'magenta')
+        cprint(f"Host: {ip} Score: {int(host['score'])} - https://www.shodan.io/host/{ip}", 'magenta')
         cprint("="* 100, 'magenta')
-        for issue in host.issues:
-            console.echo(issue.severity, '\t' + issue.desc)
+    
+        for info in host['infos']:
+            console.print_info(info)
 
+        for finding in host['findings']:
+            console.print_finding(finding)
 
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)

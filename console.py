@@ -13,10 +13,15 @@ class Console(object):
         Severity.INFO: ('cyan', None),
     }
 
-
     def echo(self, severity, val):
         fg, bg = Console.COLORS[severity]
         if bg:
             cprint(val, fg, bg)
         else:
             cprint(val, fg)
+
+    def print_info(self, info):
+        cprint(f"[INFO] {info['description']}", 'yellow')
+
+    def print_finding(self, finding):
+        pass

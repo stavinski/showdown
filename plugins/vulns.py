@@ -3,17 +3,27 @@ from shared import AbstractPlugin, Severity
 
 class Plugin(AbstractPlugin):
 
-    @property
-    def summary(self):
-        return 'Details of any vulnerabilities for the host'
+    def process(self, host, output):
+        if not 'vulns' in host or not host['vulns']:
+            return  # no vulns exit early
 
-    def process(self, host, state):
-        if 'vulns' in host and host['vulns']:
-            total = len(host['vulns'])
-            state.add_issue(host, Severity.HIGH, f"Found {total} vulnerabilities")
-            state.increase_score(host, 500)
-        else:
-            return
+        total = 0
+        highest_severity = Severity.INFO
+        for data in host['data']:
+            if 'vulns' not in data:
+                continue
+                    
+            for key, vuln in data['vulns'].items():
+                cvss = float(vuln['cvss'])
+                severity = self.map_severity(cvss)
+                if severity.value > highest_severity.value:
+                    highest_severity = severity
+        
+        output.add_finding({
+            'id': 'vulns_count',
+            'description': f"Found {total} vulnerabilities",
+            'severity': highest_severity
+        })
 
         for data in host['data']:
             if 'vulns' not in data:
@@ -22,10 +32,23 @@ class Plugin(AbstractPlugin):
             for key, vuln in data['vulns'].items():
                 cvss = float(vuln['cvss'])
                 severity = self.map_severity(cvss)
-                state.increase_score(host, cvss * 100)
-                additional = { 'verified': vuln['verified'], 'references': vuln['references'] }
-                state.add_issue(host, severity, f"[{severity.name}] {data['port']}/{data['transport']} {key} - {vuln['summary']}", additional=additional)
+                output.increase_score(cvss * 100)
+                output.add_finding({
+                    'id': '',
+                    'severity': severity,
+                    'port': data['port'],
+                    'protocol': data['transport'],
+                    'summary': vuln['summary'],
+                    'references': vuln['references'],
+                    'items': [{
+                        'description': f"Verified: {vuln['verified']}"
+                    }]
+                })
 
+
+    @property
+    def summary(self):
+        return 'Provides details for any vulnerabilities discovered'
 
     def map_severity(self, cvss):
         mappings = [
