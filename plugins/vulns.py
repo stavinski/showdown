@@ -14,6 +14,7 @@ class Plugin(AbstractPlugin):
                 continue
                     
             for key, vuln in data['vulns'].items():
+                total += 1
                 cvss = float(vuln['cvss'])
                 severity = self.map_severity(cvss)
                 if severity.value > highest_severity.value:
@@ -21,7 +22,7 @@ class Plugin(AbstractPlugin):
         
         output.add_finding({
             'id': 'vulns_count',
-            'description': f"Found {total} vulnerabilities",
+            'summary': f"Found {total} vulnerabilities",
             'severity': highest_severity
         })
 
@@ -34,14 +35,14 @@ class Plugin(AbstractPlugin):
                 severity = self.map_severity(cvss)
                 output.increase_score(cvss * 100)
                 output.add_finding({
-                    'id': '',
+                    'id': 'vuln_' + key.replace('-', '_'),
                     'severity': severity,
                     'port': data['port'],
                     'protocol': data['transport'],
                     'summary': vuln['summary'],
                     'references': vuln['references'],
                     'items': [{
-                        'description': f"Verified: {vuln['verified']}"
+                        'summary': f"Verified: {vuln['verified']}"
                     }]
                 })
 
