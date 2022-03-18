@@ -125,6 +125,7 @@ def main(args):
         for finding in host['findings']:
             console.print_finding(finding)
 
+
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
     parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')

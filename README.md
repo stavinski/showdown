@@ -66,6 +66,7 @@ class Plugin(AbstractPlugin):
 - [X] Tidy up queueing and threading
 - [ ] Common Data Structure for results
 - [ ] Sorting hosts based off score
+- [ ] De-dup findings
 - [ ] Plugin: Cloud
 - [ ] Plugin: SSL
 - [ ] Plugin: Uncommon Ports
