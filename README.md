@@ -64,6 +64,7 @@ class Plugin(AbstractPlugin):
 
 - [x] List plugins
 - [X] Tidy up queueing and threading
+- [ ] Add CSV output
 - [ ] Common Data Structure for results
 - [ ] Sorting hosts based off score
 - [ ] De-dup findings

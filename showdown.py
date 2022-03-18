@@ -9,8 +9,8 @@ from getpass import getpass
 from download import Downloader
 from shared import Pipeline
 from plugin import PluginRegistry
-from console import Console
 from shodanapi import ShodanAPI
+from formatters import FormattersRegistry
 
 
 __VERSION__ = '0.1.0'
@@ -72,7 +72,8 @@ def ip_processed(has_details):
 
 
 def main(args):
-    console = Console()
+    formatter_reg = FormattersRegistry()
+    formatter = formatter_reg.get(args.formatter)
     plugin_reg = PluginRegistry()
     pipeline = Pipeline()
     plugins = plugin_reg.retrieve_plugins(args.plugins)
@@ -114,16 +115,11 @@ def main(args):
     for host in hosts:
         output = pipeline.execute(host)
 
+    # delegate to the formatter for the output
     for ip, host in output.items():
-        cprint("="* 100, 'magenta')
-        cprint(f"Host: {ip} Score: {int(host['score'])} - https://www.shodan.io/host/{ip}", 'magenta')
-        cprint("="* 100, 'magenta')
-    
-        for info in host['infos']:
-            console.print_info(info)
-
-        for finding in host['findings']:
-            console.print_finding(finding)
+        formatter.print_host(ip, host)
+        formatter.print_infos(host['infos'])
+        formatter.print_findings(host['findings'])
 
 
 if __name__ == '__main__':   
@@ -136,6 +132,7 @@ if __name__ == '__main__':
     parser.add_argument('--version','-V', action='version', version=__VERSION__)
     parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
     parser.add_argument('--list-plugins', '-lp', help='Lists plugins available.', action='store_true')
+    parser.add_argument('--formatter', '-ft', help='Formatter to use for output, default is console.', default='console', choices=FormattersRegistry.available)
 
     args = parser.parse_args()
 
