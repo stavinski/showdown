@@ -20,9 +20,14 @@ class Plugin(AbstractPlugin):
                 if severity.value > highest_severity.value:
                     highest_severity = severity
         
+        if total == 1:
+            summary = f"Found {total} vulnerability"
+        else:
+            summary = f"Found {total} vulnerabilities"
+            
         output.add_finding({
             'id': 'vulns_count',
-            'summary': f"Found {total} vulnerabilities",
+            'summary': summary,
             'severity': highest_severity
         })
 
