@@ -1,5 +1,5 @@
 
-from abc import abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod, abstractproperty
 from enum import Enum
 from multiprocessing import set_forkserver_preload
 
@@ -70,7 +70,7 @@ class Pipeline(object):
         return self.output
 
 
-class AbstractPlugin(object):
+class AbstractPlugin(metaclass=ABCMeta):
 
     @abstractmethod
     def process(self, host, output):
@@ -80,3 +80,29 @@ class AbstractPlugin(object):
     def summary(self):
         raise NotImplementedError()
 
+
+class AbstractFormatter(metaclass=ABCMeta):
+    
+    @abstractmethod
+    def host(self, ip, host):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def infos(self, infos):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def findings(self, findings):
+        raise NotImplementedError()
+
+    def __enter__(self):
+        self.begin()
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        self.end()
+
+    def begin(self):
+        pass
+
+    def end(self):
+        pass

@@ -28,6 +28,7 @@ class Plugin(AbstractPlugin):
         output.add_finding({
             'id': 'vulns_count',
             'summary': summary,
+            'value': total,
             'severity': highest_severity
         })
 
@@ -44,11 +45,10 @@ class Plugin(AbstractPlugin):
                     'severity': severity,
                     'port': data['port'],
                     'protocol': data['transport'],
+                    'value': key,
                     'summary': vuln['summary'],
                     'references': vuln['references'],
-                    'items': [{
-                        'summary': f"Verified: {vuln['verified']}"
-                    }]
+                    'items': [f"Verified: {vuln['verified']}"]
                 })
 
 

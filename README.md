@@ -62,9 +62,9 @@ class Plugin(AbstractPlugin):
 
 ## TODO
 
-- [x] List plugins
+- [X] List plugins
 - [X] Tidy up queueing and threading
-- [ ] Add CSV output
+- [X] Add CSV output
 - [ ] Common Data Structure for results
 - [ ] Sorting hosts based off score
 - [ ] De-dup findings

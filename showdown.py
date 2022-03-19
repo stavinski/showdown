@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 from termcolor import cprint, colored
 from ipaddress import ip_address, ip_network
 from socket import gethostbyname_ex
-from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from argparse import ArgumentParser, FileType, RawDescriptionHelpFormatter
 from getpass import getpass
 from download import Downloader
 from shared import Pipeline
@@ -72,8 +73,7 @@ def ip_processed(has_details):
 
 
 def main(args):
-    formatter_reg = FormattersRegistry()
-    formatter = formatter_reg.get(args.formatter)
+    formatter_reg = FormattersRegistry(args)
     plugin_reg = PluginRegistry()
     pipeline = Pipeline()
     plugins = plugin_reg.retrieve_plugins(args.plugins)
@@ -115,12 +115,16 @@ def main(args):
     for host in hosts:
         output = pipeline.execute(host)
 
-    # delegate to the formatter for the output
-    for ip, host in output.items():
-        formatter.print_host(ip, host)
-        formatter.print_infos(host['infos'])
-        formatter.print_findings(host['findings'])
+    formatter = formatter_reg.get(args.formatter)
+    with formatter:    
+        # delegate to the formatter for the output
+        for ip, host in output.items():
+            formatter.host(ip, host)
+            formatter.infos(host['infos'])
+            formatter.findings(host['findings'])
 
+    args.output.close()
+    cprint('[*] Done.', 'green', file=sys.stdout)
 
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
@@ -133,6 +137,8 @@ if __name__ == '__main__':
     parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
     parser.add_argument('--list-plugins', '-lp', help='Lists plugins available.', action='store_true')
     parser.add_argument('--formatter', '-ft', help='Formatter to use for output, default is console.', default='console', choices=FormattersRegistry.available)
+    parser.add_argument('--output', '-o', help='Output file to use, default is stdout.', type=FileType('w'), default='-', metavar='FILE')
+    parser.add_argument('--no-color',help='Outputs to console with no color. Default is False.', action='store_true', default=False)
 
     args = parser.parse_args()
 

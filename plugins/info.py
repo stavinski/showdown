@@ -8,13 +8,15 @@ class Plugin(AbstractPlugin):
         if host['os']:
             output.add_info({ 
                 'id': 'os_id',
-                'description': f"OS: {host['os']}"
+                'summary': f"OS: {host['os']}",
+                'value': f"{host['os']}"
             })
 
         last_updated = datetime.strptime(host['last_update'], '%Y-%m-%dT%H:%M:%S.%f')
         output.add_info({
             'id': 'last_updated',
-            'description': f"Last Updated: {last_updated:%Y-%m-%d %H:%M}"
+            'summary': f"Last Updated: {last_updated:%Y-%m-%d %H:%M}",
+            'value': f"{last_updated:%Y-%m-%d %H:%M}"
         })
 
     @property
