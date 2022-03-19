@@ -123,8 +123,9 @@ def main(args):
             formatter.infos(host['infos'])
             formatter.findings(host['findings'])
 
+    cprint('[*] Done.', 'green')
     args.output.close()
-    cprint('[*] Done.', 'green', file=sys.stdout)
+
 
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
