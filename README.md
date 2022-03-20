@@ -83,8 +83,7 @@ class Plugin(AbstractPlugin):
 - [X] Tidy up queueing and threading
 - [X] Add CSV output
 - [X] Common Data Structure for results
-- [ ] Sorting hosts based off score
-- [ ] De-dup findings
+- [X] Sorting hosts based off score
 - [ ] Plugin: Cloud
 - [ ] Plugin: SSL
 - [ ] Plugin: Uncommon Ports
@@ -92,4 +91,3 @@ class Plugin(AbstractPlugin):
 - [ ] Plugin: Certs
 - [ ] Plugin: Screens
 - [ ] Wire up verbosity
-
