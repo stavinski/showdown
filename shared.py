@@ -1,6 +1,7 @@
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 from enum import Enum
+from functools import total_ordering
 
 
 class Severity(Enum):
@@ -36,7 +37,7 @@ class Finding(object):
     def has_port(self):
         return self.port != ''
     
-
+@total_ordering
 class OutputHost(object):
 
     def __init__(self) -> None:
@@ -51,6 +52,12 @@ class OutputHost(object):
             raise ValueError('val can only be a positive value.')
 
         self._score += val
+
+    def __eq__(self, other):
+        return self.score == other.score
+
+    def __lt__(self, other):
+        return self.score < other.score
 
     @property
     def score(self):
