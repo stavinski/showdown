@@ -24,18 +24,15 @@ class ConsoleFormatter(AbstractFormatter):
     def echo(self, severity, val):
         fg, bg = ConsoleFormatter.COLORS[severity]
         self.print(val, fg, bg)
-        
+
+    def format(self, ip,  host):
+        self.host(ip, host)
+        self.findings(host.findings)
+
     def host(self, ip, host):
         self.print("="* 100, 'magenta')
-        self.print(f"Host: {ip} Score: {int(host['score'])} - https://www.shodan.io/host/{ip}", 'magenta')
+        self.print(f"Host: {ip} Score: {host.score} - https://www.shodan.io/host/{ip}", 'magenta')
         self.print("="* 100, 'magenta')
-
-    def infos(self, infos):
-        for info in infos:
-            self.print_info(info)
-
-    def print_info(self, info):
-        self.print(f"[INFO] {info['summary']}", 'blue')
 
     def findings(self, findings):
         for finding in findings:
@@ -43,16 +40,14 @@ class ConsoleFormatter(AbstractFormatter):
 
     def print_finding(self, finding):
         
-        severity = finding['severity']
-        if 'port' in finding and 'protocol' in finding:
-            self.echo(severity, f"[{finding['port']}/{finding['protocol']}] => {finding['summary']}")
+        severity = finding.severity
+        if finding.has_port:
+            self.echo(severity, f"[{finding.port}/{finding.protocol}] => {finding.summary}")
         else:
-            self.echo(severity, f"[+] {finding['summary']}")
+            self.echo(severity, f"[+] {finding.summary}")
 
-        if 'items' in finding:
-            for item in finding['items']:
-                self.print(f"\t[+] {item}", 'cyan')
-        
-        if 'references' in finding:
-            for reference in finding['references']:
-                self.print(f"\t[+] {reference}", 'blue')
+        for item in finding.items:
+            self.print(f"\t[+] {item}", 'cyan')
+    
+        for reference in finding.references:
+            self.print(f"\t[+] {reference}", 'blue')

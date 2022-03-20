@@ -119,10 +119,8 @@ def main(args):
     with formatter:    
         # delegate to the formatter for the output
         for ip, host in output.items():
-            formatter.host(ip, host)
-            formatter.infos(host['infos'])
-            formatter.findings(host['findings'])
-
+            formatter.format(ip, host)
+            
     cprint('[*] Done.', 'green')
     args.output.close()
 

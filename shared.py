@@ -1,7 +1,7 @@
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 from enum import Enum
-from multiprocessing import set_forkserver_preload
+
 
 class Severity(Enum):
     INFO = 1
@@ -22,32 +22,44 @@ class Severity(Enum):
 
 class Finding(object):
     
-    def __init__(self, severity, desc, additional={}):
+    def __init__(self, id, value, summary, port='', severity=Severity.INFO, protocol='', references=[], items=[]):
+        self.id = id
+        self.value = value
+        self.summary = summary
+        self.port = port
         self.severity = severity
-        self.desc = desc
-        self.additional = additional
+        self.protocol = protocol
+        self.references = references
+        self.items = items
 
+    @property
+    def has_port(self):
+        return self.port != ''
+    
 
-class Host(object):
-    def __init__(self):
-        self.score = 0
-        self.issues = []
+class OutputHost(object):
 
-
-class PipelineHostOutput(object):
-
-    def __init__(self):
-        self.host = { 'score': 0, 'findings': [], 'infos': [] }
-
-    def increase_score(self, val):
-        self.host['score'] += val
-
-    def add_info(self, info):
-        self.host['infos'].append(info)
+    def __init__(self) -> None:
+        self._score = 0
+        self._findings = []
 
     def add_finding(self, finding):
-        self.host['findings'].append(finding)
-    
+        self._findings.append(finding)
+
+    def increase_score(self, val):
+        if val < 0:
+            raise ValueError('val can only be a positive value.')
+
+        self._score += val
+
+    @property
+    def score(self):
+        return int(self._score)
+
+    @property
+    def findings(self):
+        return self._findings
+
 
 class Pipeline(object):
     
@@ -59,14 +71,14 @@ class Pipeline(object):
         self.plugins.append(plugin)
 
     def execute(self, host):
-        # give the plugin a helper object to work against
-        output = PipelineHostOutput()
+        # give the plugin a Host object to work against
+        output = OutputHost()
 
         for plugin in self.plugins:
             plugin.process(host, output)
         
         # now store the host output against the ip
-        self.output[host['ip_str']] = output.host
+        self.output[host['ip_str']] = output
         return self.output
 
 
@@ -84,15 +96,7 @@ class AbstractPlugin(metaclass=ABCMeta):
 class AbstractFormatter(metaclass=ABCMeta):
     
     @abstractmethod
-    def host(self, ip, host):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def infos(self, infos):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def findings(self, findings):
+    def format(self, ip, host):
         raise NotImplementedError()
 
     def __enter__(self):

@@ -82,7 +82,7 @@ A. I mean you can using the `--network` argument and simply using a CIDR length 
 - [X] List plugins
 - [X] Tidy up queueing and threading
 - [X] Add CSV output
-- [ ] Common Data Structure for results
+- [X] Common Data Structure for results
 - [ ] Sorting hosts based off score
 - [ ] De-dup findings
 - [ ] Plugin: Cloud

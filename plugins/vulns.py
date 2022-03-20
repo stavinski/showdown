@@ -1,4 +1,4 @@
-from shared import AbstractPlugin, Severity
+from shared import AbstractPlugin, Finding, Severity
 
 
 class Plugin(AbstractPlugin):
@@ -25,13 +25,8 @@ class Plugin(AbstractPlugin):
         else:
             summary = f"Found {total} vulnerabilities"
             
-        output.add_finding({
-            'id': 'vulns_count',
-            'summary': summary,
-            'value': total,
-            'severity': highest_severity
-        })
-
+        output.add_finding(Finding('vulns_count', total, summary, severity=highest_severity))
+        
         for data in host['data']:
             if 'vulns' not in data:
                 continue
@@ -40,17 +35,16 @@ class Plugin(AbstractPlugin):
                 cvss = float(vuln['cvss'])
                 severity = self.map_severity(cvss)
                 output.increase_score(cvss * 100)
-                output.add_finding({
-                    'id': 'vuln_' + key.replace('-', '_'),
-                    'severity': severity,
-                    'port': data['port'],
-                    'protocol': data['transport'],
-                    'value': key,
-                    'summary': vuln['summary'],
-                    'references': vuln['references'],
-                    'items': [f"Verified: {vuln['verified']}"]
-                })
-
+                output.add_finding(Finding(
+                    'vuln_' + key.replace('-', '_'),
+                    key,
+                    vuln['summary'],
+                    data['port'],
+                    severity,
+                    data['transport'],
+                    vuln['references'],
+                    [f"Verified: {vuln['verified']}"]
+                ))
 
     @property
     def summary(self):
