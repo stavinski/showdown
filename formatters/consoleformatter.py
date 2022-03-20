@@ -1,3 +1,4 @@
+from click import echo
 from termcolor import cprint
 from shared import Severity, AbstractFormatter
 
@@ -15,15 +16,22 @@ class ConsoleFormatter(AbstractFormatter):
         super().__init__()
         self.args = args
 
-    def print(self, val, fore_color, bg_color=None):
-        if self.args.no_color:
-            print(val, file=self.args.output)
-        else:
-            cprint(val, fore_color, bg_color, file=self.args.output)
+    def newline(self):
+        print(file=self.args.output)
 
-    def echo(self, severity, val):
+    def print(self, val, fore_color=None, bg_color=None, end=None):
+        if self.args.no_color:
+            print(val, file=self.args.output, end=end)
+        else:
+            cprint(val, fore_color, bg_color, file=self.args.output, end=end)
+
+    def begin(self):
+        if not self.args.no_color:
+            self._print_key()
+
+    def echo(self, severity, val, end=None):
         fg, bg = ConsoleFormatter.COLORS[severity]
-        self.print(val, fg, bg)
+        self.print(val, fg, bg, end=end)
 
     def format(self, ip,  host):
         self.host(ip, host)
@@ -39,7 +47,6 @@ class ConsoleFormatter(AbstractFormatter):
             self.print_finding(finding)
 
     def print_finding(self, finding):
-        
         severity = finding.severity
         if finding.has_port:
             self.echo(severity, f"[{finding.port}/{finding.protocol}] => {finding.summary}")
@@ -51,3 +58,9 @@ class ConsoleFormatter(AbstractFormatter):
     
         for reference in finding.references:
             self.print(f"\t[+] {reference}", 'blue')
+
+    def _print_key(self):
+        self.print('[+] Key: ', end='')
+        for severity in Severity.all():
+            self.echo(severity, severity.name, end=' ')
+        self.newline()

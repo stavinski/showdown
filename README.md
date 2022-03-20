@@ -70,11 +70,11 @@ class Plugin(AbstractPlugin):
 
 **Q. Why does it take a while to return results?**
 
-A. Shodan is rate limited to 1 request per second. Showdown does try to be as efficient as it can by utilising separate threads to make the request so that if a request is taking a while to respond it is not penalised by this delay. That being said it is still restricted to making calls once per second. Another option is batching IPs however this is only permitted on the Enterprise plan which I do not have so I cannot test against this approach.
+**A.** Shodan is rate limited to 1 request per second. Showdown does try to be as efficient as it can by utilising separate threads to make the request so that if a request is taking a while to respond it is not penalised by this delay. That being said it is still restricted to making calls once per second. Another option is batching IPs however this is only permitted on the Enterprise plan which I do not have so I cannot test against this approach.
 
 **Q. Can I run against a single host?**
 
-A. I mean you can using the `--network` argument and simply using a CIDR length of `/32` for example `--network 8.8.8.8/32` however this isn't really the intended purpose of the tool which was to cover a broad number of targets and help identify hosts to check first whilst waiting for other scans etc...
+**A.** I mean you can using the `--network` argument and simply using a CIDR length of `/32` for example `--network 8.8.8.8/32` however this isn't really the intended purpose of the tool which was to cover a broad number of targets and help identify hosts to check first whilst waiting for other scans etc...
 
 
 ## TODO
