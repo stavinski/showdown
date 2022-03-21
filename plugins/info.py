@@ -11,6 +11,12 @@ class Plugin(AbstractPlugin):
         last_updated = datetime.strptime(host['last_update'], '%Y-%m-%dT%H:%M:%S.%f')
         output.add_finding(Finding('last_updated', last_updated, f"Last Updated: {last_updated:%Y-%m-%d %H:%M}"))
 
+        if host['ports']:
+            output.add_finding(Finding('ports_id', host['ports'], f"Ports: {','.join(map(str, host['ports']))}"))
+
+        if host['hostnames']:
+            output.add_finding(Finding('hostnames_id', host['hostnames'], f"Hostnames: {','.join(host['hostnames'])}"))
+
     @property
     def summary(self):
         return 'Standard information about the host'
