@@ -90,4 +90,5 @@ class Plugin(AbstractPlugin):
 - [ ] Plugin: WAF
 - [ ] Plugin: Certs
 - [ ] Plugin: Screens
+- [ ] Minium severity argument
 - [ ] Wire up verbosity
