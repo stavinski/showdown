@@ -84,7 +84,7 @@ class Plugin(AbstractPlugin):
 - [X] Add CSV output
 - [X] Common Data Structure for results
 - [X] Sorting hosts based off score
-- [ ] Plugin: Cloud
+- [X] Plugin: Cloud
 - [ ] Plugin: SSL
 - [ ] Plugin: Uncommon Ports
 - [ ] Plugin: WAF
