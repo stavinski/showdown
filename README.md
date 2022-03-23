@@ -85,7 +85,7 @@ class Plugin(AbstractPlugin):
 - [X] Common Data Structure for results
 - [X] Sorting hosts based off score
 - [X] Plugin: Cloud
-- [ ] Plugin: SSL
+- [X] Plugin: SSL
 - [ ] Plugin: Uncommon Ports
 - [ ] Plugin: WAF
 - [ ] Plugin: Certs
