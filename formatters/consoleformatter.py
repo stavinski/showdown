@@ -38,9 +38,9 @@ class ConsoleFormatter(AbstractFormatter):
         self.findings(host.findings)
 
     def host(self, ip, host):
-        self.print("="* 100, 'magenta')
+        self.print("="* 80, 'magenta')
         self.print(f"Host: {ip} Score: {host.score} - https://www.shodan.io/host/{ip}", 'magenta')
-        self.print("="* 100, 'magenta')
+        self.print("="* 80, 'magenta')
 
     def findings(self, findings):
         for finding in findings:
