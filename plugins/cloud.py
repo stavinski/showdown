@@ -28,23 +28,26 @@ class Plugin(AbstractPlugin):
             if region not in regions:
                 regions.add(region)
         
-        output.add_finding(Finding(
-                    'cloud_providers',
-                    providers,
-                    f"Cloud Providers: {','.join(providers)}"
-                ))
+        if providers:
+            output.add_finding(Finding(
+                        'cloud_providers',
+                        providers,
+                        f"Cloud Providers: {','.join(providers)}"
+                    ))
 
-        output.add_finding(Finding(
-                    'cloud_services',
-                    services,
-                    f"Cloud services: {','.join(services)}"
-                ))
+        if services:
+            output.add_finding(Finding(
+                        'cloud_services',
+                        services,
+                        f"Cloud services: {','.join(services)}"
+                    ))
 
-        output.add_finding(Finding(
-                    'cloud_regions',
-                    regions,
-                    f"Cloud regions: {','.join(regions)}"
-                ))
+        if regions:
+            output.add_finding(Finding(
+                        'cloud_regions',
+                        regions,
+                        f"Cloud regions: {','.join(regions)}"
+                    ))
 
 
     @property
