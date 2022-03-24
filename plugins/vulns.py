@@ -53,10 +53,10 @@ class Plugin(AbstractPlugin):
     def map_severity(self, cvss):
         mappings = [
             (0.0, 0.0, Severity.INFO),
-            (1.0, 3.9, Severity.LOW),
+            (0.1, 3.9, Severity.LOW),
             (4.0, 6.9, Severity.MEDIUM),
-            (7.0, 9.9, Severity.HIGH),
-            (10.0, 10.0, Severity.CRITICAL)
+            (7.0, 8.9, Severity.HIGH),
+            (9.0, 10.0, Severity.CRITICAL)
         ]
 
         if cvss < 0 or cvss > 10:
