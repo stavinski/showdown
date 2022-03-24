@@ -86,9 +86,8 @@ class Plugin(AbstractPlugin):
 - [X] Sorting hosts based off score
 - [X] Plugin: Cloud
 - [X] Plugin: SSL
+- [X] Minium severity argument
 - [ ] Plugin: Uncommon Ports
-- [ ] Plugin: WAF
-- [ ] Plugin: Certs
+- [ ] Plugin: HTML
 - [ ] Plugin: Screens
-- [ ] Minium severity argument
 - [ ] Wire up verbosity

@@ -20,6 +20,15 @@ class Severity(Enum):
             cls.LOW,
             cls.INFO
         ]
+    
+    @classmethod
+    def from_name(cls, name):
+        found = [severity for severity in cls.all() if severity.name == name] 
+        if not found:
+            raise ValueError(f"{name} is not a valid Severity name.")
+        
+        return found[0]
+
 
 class Finding(object):
     

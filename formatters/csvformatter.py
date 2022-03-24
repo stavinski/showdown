@@ -21,14 +21,15 @@ class CSVFormatter(AbstractFormatter):
 
     def findings(self, findings):
         for finding in findings:
-            self.writer.writerow([self.ip, 
-                self.score, 
-                finding.id, 
-                finding.port, 
-                finding.protocol, 
-                finding.value, 
-                finding.summary, 
-                finding.severity.name, 
-                ';'.join(finding.references), 
-                ';'.join(finding.items)]
-            )
+            if finding.severity.value >= self.args.min_severity.value:
+                self.writer.writerow([self.ip, 
+                    self.score, 
+                    finding.id, 
+                    finding.port, 
+                    finding.protocol, 
+                    finding.value, 
+                    finding.summary, 
+                    finding.severity.name, 
+                    ';'.join(finding.references), 
+                    ';'.join(finding.items)]
+                )

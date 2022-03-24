@@ -1,3 +1,4 @@
+from gettext import find
 from click import echo
 from termcolor import cprint
 from shared import Severity, AbstractFormatter
@@ -44,7 +45,8 @@ class ConsoleFormatter(AbstractFormatter):
 
     def findings(self, findings):
         for finding in findings:
-            self.print_finding(finding)
+            if finding.severity.value >= self.args.min_severity.value:
+                self.print_finding(finding)
 
     def print_finding(self, finding):
         severity = finding.severity

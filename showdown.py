@@ -8,7 +8,7 @@ from socket import gethostbyname_ex
 from argparse import ArgumentParser, FileType, RawDescriptionHelpFormatter
 from getpass import getpass
 from download import Downloader
-from shared import Pipeline
+from shared import Pipeline, Severity
 from plugin import PluginRegistry
 from shodanapi import ShodanAPI
 from formatters import FormattersRegistry
@@ -138,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('--formatter', '-ft', help='Formatter to use for output, default is console.', default='console', choices=FormattersRegistry.available)
     parser.add_argument('--output', '-o', help='Output file to use, default is stdout.', type=FileType('w'), default='-', metavar='FILE')
     parser.add_argument('--no-color',help='Outputs to console with no color. Default is False.', action='store_true', default=False)
+    parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on. Default is INFO.', choices=Severity.all(), default=Severity.INFO)
 
     args = parser.parse_args()
 
