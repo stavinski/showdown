@@ -229,17 +229,19 @@ class Plugin(AbstractPlugin):
                     ))
                 output.increase_score(50)
         
-        if subject and '*.' in subject['CN']:
-                output.add_finding(Finding(
-                        f"cert_wildcard_cn",
-                        subject['CN'],
-                        f"Wildcard cert CN: {subject['CN']}",
-                        data['port'],
-                        Severity.LOW,
-                        data['transport']
-                    ))
-                output.increase_score(50)
-        
+        if subject:
+            common_name = subject.get('CN', None)
+            if common_name and '*.' in common_name:
+                    output.add_finding(Finding(
+                            f"cert_wildcard_cn",
+                            common_name,
+                            f"Wildcard cert CN: {common_name}",
+                            data['port'],
+                            Severity.LOW,
+                            data['transport']
+                        ))
+                    output.increase_score(50)
+            
         found = [extension['data'] for extension in extensions if extension['name'] == 'subjectAltName']
         if found:
             alt_names = found[0]
