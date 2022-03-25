@@ -130,7 +130,7 @@ if __name__ == '__main__':
     parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
     parser.add_argument('--network', '-n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
-    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=PluginRegistry.available)
+    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', metavar='PLUGIN', nargs='+', default=['info', 'vulns'], choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
     parser.add_argument('--version','-V', action='version', version=__VERSION__)
     parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('--formatter', '-ft', help='Formatter to use for output, default is console.', default='console', choices=FormattersRegistry.available)
     parser.add_argument('--output', '-o', help='Output file to use, default is stdout.', type=FileType('w'), default='-', metavar='FILE')
     parser.add_argument('--no-color',help='Outputs to console with no color. Default is False.', action='store_true', default=False)
-    parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on. Default is INFO.', choices=Severity.all(), default=Severity.INFO)
+    parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on. Default is INFO.', metavar='SEVERITY', choices=Severity.all(), default=Severity.INFO)
 
     args = parser.parse_args()
 
