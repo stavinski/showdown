@@ -2,14 +2,31 @@
 
 ## Summary
 
-Tool that allows (tailored) juicy information to be retrieved from shodan for external targets. This is possible as it uses a plugin model to allow use of built-in plugins or custom created ones when deciding what information to be returned.
+Showdown is a tool that utilises shodan in order to find targets of interest, it should be used at the start of an external test whilst other scans and enumeration are being performed, and allows for an efficient way of knowing which targets should be focused on initially.
+
+It uses a plugin model and comes with built-in plugins to that should give good coverage on items such as vulnerabilities, SSL/TLS however if there are certain items not covered that you need then it's simple to write your own to cover these and better still send a PR to get it introduced to the built-in library!
+
+## Install
+
+I would ussually recommend setting up a venv environment to not clobber other libraries, this can be done by installing venv using your package manager (i.e. `sudo apt install python3-venv`).
+
+Once this is done you can then clone the repo, setup venv, clone the repo and install the libraries from pip:
+
+~~~
+git@github.com:stavinski/showdown.git
+cd showdown
+python3 -m venv .venv  # setup a venv environment in .venv dir
+source .venv/bin/activate  # activate the venv, use deactivate to revert back
+pip install -r requirements.txt
+~~~
+
+This should allow you to now use the application, of course you could forgo using venv and just install the requirements globally.
 
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...]] [--verbose] [--version]
-                   [--threads THREADS] [--list-plugins] [--formatter {console,csv}] [--output FILE] [--no-color]
-                   [--min-severity {Severity.CRITICAL,Severity.HIGH,Severity.MEDIUM,Severity.LOW,Severity.INFO}]
+usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}]
+                   [--output FILE] [--no-color] [--min-severity SEVERITY]
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -30,7 +47,7 @@ optional arguments:
                         Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
-  --plugins {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...], -p {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...]
+  --plugins PLUGIN [PLUGIN ...], -p PLUGIN [PLUGIN ...]
                         Plugins to run, defaults to info vulns.
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
@@ -42,7 +59,7 @@ optional arguments:
   --output FILE, -o FILE
                         Output file to use, default is stdout.
   --no-color            Outputs to console with no color. Default is False.
-  --min-severity {Severity.CRITICAL,Severity.HIGH,Severity.MEDIUM,Severity.LOW,Severity.INFO}
+  --min-severity SEVERITY
                         Minimum severity to report on. Default is INFO.
 ```
 
