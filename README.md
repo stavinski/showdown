@@ -7,8 +7,9 @@ Tool that allows (tailored) juicy information to be retrieved from shodan for ex
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {info,vulns} [{info,vulns} ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins]
-                   [--formatter {console,csv}] [--output FILE] [--no-color]
+usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...]] [--verbose] [--version]
+                   [--threads THREADS] [--list-plugins] [--formatter {console,csv}] [--output FILE] [--no-color]
+                   [--min-severity {Severity.CRITICAL,Severity.HIGH,Severity.MEDIUM,Severity.LOW,Severity.INFO}]
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -29,7 +30,7 @@ optional arguments:
                         Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
-  --plugins {info,vulns} [{info,vulns} ...], -p {info,vulns} [{info,vulns} ...]
+  --plugins {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...], -p {cloud,html,info,interesting,ssl,vulns} [{cloud,html,info,interesting,ssl,vulns} ...]
                         Plugins to run, defaults to info vulns.
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
@@ -41,6 +42,8 @@ optional arguments:
   --output FILE, -o FILE
                         Output file to use, default is stdout.
   --no-color            Outputs to console with no color. Default is False.
+  --min-severity {Severity.CRITICAL,Severity.HIGH,Severity.MEDIUM,Severity.LOW,Severity.INFO}
+                        Minimum severity to report on. Default is INFO.
 ```
 
 ## Plugins
