@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
 import sys
 from termcolor import cprint, colored
 from ipaddress import ip_address, ip_network
@@ -29,6 +28,9 @@ __BANNER__ = __LOGO__ + colored(f"""
     """, 'yellow')
 __BANNER__ += colored("""Pull back juicy info on external targets from shodan!
 """, 'green')
+
+
+_DEFAULT_PLUGINS = ['info', 'vulns', 'ssl', 'http']
 
 def get_api_key(args):
     if args.key_file:
@@ -130,7 +132,7 @@ if __name__ == '__main__':
     parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
     parser.add_argument('--network', '-n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
-    parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', metavar='PLUGIN', nargs='+', default=['info', 'vulns'], choices=PluginRegistry.available)
+    parser.add_argument('--plugins','-p', help=f"Plugins to run, defaults to {' '.join(_DEFAULT_PLUGINS)}.", metavar='PLUGIN', nargs='+', default=_DEFAULT_PLUGINS, choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
     parser.add_argument('--version','-V', action='version', version=__VERSION__)
     parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
