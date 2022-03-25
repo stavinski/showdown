@@ -26,7 +26,7 @@ usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] 
 optional arguments:
   -h, --help            show this help message and exit
   --file FILE, -f FILE  Hosts file, can be either hostname or IP address.
-  --network NETWORK, --n NETWORK
+  --network NETWORK, -n NETWORK
                         Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.

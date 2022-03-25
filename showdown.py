@@ -128,7 +128,7 @@ def main(args):
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
     parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
-    parser.add_argument('--network', '--n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
+    parser.add_argument('--network', '-n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
     parser.add_argument('--plugins','-p', help='Plugins to run, defaults to info vulns.', nargs='+', default=['info', 'vulns'], choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
