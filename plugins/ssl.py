@@ -294,5 +294,6 @@ class Plugin(AbstractPlugin):
                 ))
             output.increase_score(100)
 
+    @property
     def summary(self):
         return 'Findings related to SSL/TLS issues such as legacy protocols and weak ciphers.'    

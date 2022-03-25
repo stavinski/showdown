@@ -87,6 +87,7 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: Cloud
 - [X] Plugin: SSL
 - [X] Minium severity argument
+- [ ] Plugin: Interesting Ports
 - [ ] Plugin: Uncommon Ports
 - [ ] Plugin: HTML
 - [ ] Plugin: Screens
