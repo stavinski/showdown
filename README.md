@@ -25,8 +25,8 @@ This should allow you to now use the application, of course you could forgo usin
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}]
-                   [--output FILE] [--no-color] [--min-severity SEVERITY]
+usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins]
+                   [--formatter {console,csv}] [--output FILE] [--no-color] [--min-severity SEVERITY]
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -36,7 +36,7 @@ usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] 
 ███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
 ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
 
-    0.1.0 Mike Cromwell
+    1.0.0 Mike Cromwell
     Pull back juicy info on external targets from shodan!
 
 
@@ -48,7 +48,7 @@ optional arguments:
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
   --plugins PLUGIN [PLUGIN ...], -p PLUGIN [PLUGIN ...]
-                        Plugins to run, defaults to info vulns.
+                        Plugins to run, defaults to info vulns ssl http.
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
   --threads THREADS, -t THREADS
@@ -107,8 +107,6 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: Cloud
 - [X] Plugin: SSL
 - [X] Minium severity argument
+- [X] Plugin: HTTP
 - [ ] Plugin: Interesting Ports
-- [ ] Plugin: Uncommon Ports
-- [ ] Plugin: HTML
-- [ ] Plugin: Screens
 - [ ] Wire up verbosity
