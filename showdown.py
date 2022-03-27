@@ -44,25 +44,30 @@ def get_api_key(args):
         return api_key
 
 
-def retrieve_ips(args):
+def get_file_ips(args):
     ips = set()
 
-    if args.file:
-        with open(args.file, 'r') as hosts_file:
-            for host in hosts_file:
-                hostname = host.rstrip()
+    with args.file as hosts_file:
+        for line in hosts_file:
+            hostname = line.rstrip()
+            if hostname:
                 try:
-                    ip = ip_address(hostname.rstrip())
+                    ip = ip_address(hostname)
                     ips.add(str(ip))
                 except ValueError:
-                    print(f"[*] Resolving ips for '{hostname}'")
+                    print(f"[*] Resolving IP(s) for '{hostname}'")
                     _, __, resolved = gethostbyname_ex(hostname)
                     ips.update(resolved)
-        
-    if args.network:
-        for network in args.network:
-            net = ip_network(network)
-            ips.update(map(str, net.hosts()))
+            
+    return ips
+
+
+def get_net_ips(args):
+    ips = set()
+    
+    for network in args.network:
+        net = ip_network(network)
+        ips.update(map(str, net.hosts()))
     
     return ips
 
@@ -84,7 +89,7 @@ def main(args):
     print('[*] Starting up')
     
     api_key = get_api_key(args)
-    ips = retrieve_ips(args)
+    ips = args.retrieve_ips(args)
     api = ShodanAPI(api_key)
     print('[*] Testing shodan')
     success, result = api.test()
@@ -94,7 +99,7 @@ def main(args):
     else:
         raise SystemExit(colored(f"[!] Error calling Shodan: '{result}'.", 'red'))
 
-    print(f"[+] IPs: {','.join(ips)}")
+    print(f"[+] IPs: {' '.join(ips)}")
     print(f"[+] Plugins: {' '.join(args.plugins)}")
 
     for plugin in plugins:
@@ -124,13 +129,13 @@ def main(args):
             formatter.format(ip, host)
             
     cprint('[*] Done.', 'green')
-    args.output.close()
 
 
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
-    parser.add_argument('--file', '-f', help='Hosts file, can be either hostname or IP address.')
-    parser.add_argument('--network', '-n', help='Network range to search using CIDR notation (13.77.161.0/22); supports multiple.', action='append')
+    subparsers = parser.add_subparsers()
+
+    # common args
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
     parser.add_argument('--plugins','-p', help=f"Plugins to run, defaults to {' '.join(_DEFAULT_PLUGINS)}.", metavar='PLUGIN', nargs='+', default=_DEFAULT_PLUGINS, choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
@@ -141,6 +146,16 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', help='Output file to use, default is stdout.', type=FileType('w'), default='-', metavar='FILE')
     parser.add_argument('--no-color',help='Outputs to console with no color. Default is False.', action='store_true', default=False)
     parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on. Default is INFO.', metavar='SEVERITY', choices=Severity.all(), default=Severity.INFO)
+
+    # input from file
+    file_parser = subparsers.add_parser('file')
+    file_parser.add_argument('file', help='Hosts file, can be either hostname or IP address each on newline.', type=FileType('r'), metavar='FILE')
+    file_parser.set_defaults(retrieve_ips=get_file_ips)
+
+    # input from supplied networks
+    net_parser = subparsers.add_parser('net')
+    net_parser.add_argument('network', help='Network range to search using CIDR notation (13.77.161.0/22).', metavar='NETWORK', nargs='+')
+    net_parser.set_defaults(retrieve_ips=get_net_ips)
 
     args = parser.parse_args()
 
@@ -154,10 +169,9 @@ if __name__ == '__main__':
         print('[+] Use with --plugins <plugin1> <plugin2> ...')
         sys.exit()
 
-    if not args.file and not args.network:
-        raise SystemExit(colored('[!] Must provide either a file or network to search against, see usage with -h.', 'red'))
-
     try:
-        main(args)
+        # make sure output file is closed
+        with args.output:
+            main(args)
     except KeyboardInterrupt:
         raise SystemExit(colored('\n[!] CRTL-C pressed, exiting.', 'red'))
