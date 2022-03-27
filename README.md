@@ -25,8 +25,9 @@ This should allow you to now use the application, of course you could forgo usin
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins]
-                   [--formatter {console,csv}] [--output FILE] [--no-color] [--min-severity SEVERITY]
+usage: showdown.py [-h] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}] [--output FILE]
+                   [--no-color] [--min-severity SEVERITY]
+                   {file,net} ...
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -40,15 +41,15 @@ usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] 
     Pull back juicy info on external targets from shodan!
 
 
+positional arguments:
+  {file,net}
+
 optional arguments:
   -h, --help            show this help message and exit
-  --file FILE, -f FILE  Hosts file, can be either hostname or IP address.
-  --network NETWORK, -n NETWORK
-                        Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
   --plugins PLUGIN [PLUGIN ...], -p PLUGIN [PLUGIN ...]
-                        Plugins to run, defaults to info vulns ssl http.
+                        Plugins to run, defaults to info vulns ssl http shares.
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
   --threads THREADS, -t THREADS
