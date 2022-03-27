@@ -71,13 +71,21 @@ To create a new plugin:
 2. Implement the required class structure, for example:
 
 ```python
-from shared import AbstractPlugin, Severity
+from shared import AbstractPlugin, Severity, Finding
 
 class Plugin(AbstractPlugin):
 
     def process(self, host, output):
-        # retrieve cloud details
-        # populate using the output helper object
+        # populate using the output helper object, for example:
+        output.add_finding(Finding(
+                        'finding_key',
+                        val,
+                        'Summary',
+                        port,
+                        Severity.MEDIUM,
+                        proto
+                    ))
+        output.increase_score(50)
 
     @property
     def summary(self):
