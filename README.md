@@ -64,6 +64,18 @@ Input mode:
   {file,net}            Either from file or network address(es).
 ```
 
+Find findings rated medium or above from hosts in file `hosts.txt`, use shodan key file `shodan.key`:
+
+~~~ sh
+python3 showdown.py --min-severity MEDIUM --key-file shodan.key file hosts.txt
+~~~
+
+Find SSL/TLS findings in network `103.71.205.0/24` and prompt for API key:
+
+~~~ sh
+python3 showdown.py --plugins ssl net 103.71.205.0/24
+~~~
+
 ## Plugins
 
 To create a new plugin:
