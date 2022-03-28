@@ -41,27 +41,27 @@ usage: showdown.py [-h] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [-
     Pull back juicy info on external targets from shodan!
 
 
-positional arguments:
-  {file,net}
-
 optional arguments:
   -h, --help            show this help message and exit
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
   --plugins PLUGIN [PLUGIN ...], -p PLUGIN [PLUGIN ...]
-                        Plugins to run, defaults to info vulns ssl http shares.
+                        Plugins to run (defaults: info vulns ssl http shares).
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
   --threads THREADS, -t THREADS
-                        Number of threads to use for retrieving hosts. Defaults to 10
+                        Number of threads to use for retrieving hosts (default: 10)
   --list-plugins, -lp   Lists plugins available.
   --formatter {console,csv}, -ft {console,csv}
-                        Formatter to use for output, default is console.
+                        Formatter to use for output (default: console).
   --output FILE, -o FILE
-                        Output file to use, default is stdout.
-  --no-color            Outputs to console with no color. Default is False.
+                        Output file to use (default: stdout).
+  --no-color            Outputs to console with no color (default: False).
   --min-severity SEVERITY
-                        Minimum severity to report on. Default is INFO.
+                        Minimum severity to report on (default: INFO).
+
+Input mode:
+  {file,net}            Either from file or network address(es).
 ```
 
 ## Plugins

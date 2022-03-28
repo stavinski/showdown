@@ -133,19 +133,19 @@ def main(args):
 
 if __name__ == '__main__':   
     parser = ArgumentParser(prog='showdown.py', formatter_class=RawDescriptionHelpFormatter, description=__BANNER__)
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title='Input mode', help='Either from file or network address(es).')
 
     # common args
     parser.add_argument('--key-file', '-kf', help='Shodan API key file, if not provided then API key will be prompted for.')
-    parser.add_argument('--plugins','-p', help=f"Plugins to run, defaults to {' '.join(_DEFAULT_PLUGINS)}.", metavar='PLUGIN', nargs='+', default=_DEFAULT_PLUGINS, choices=PluginRegistry.available)
+    parser.add_argument('--plugins','-p', help=f"Plugins to run (defaults: {' '.join(_DEFAULT_PLUGINS)}).", metavar='PLUGIN', nargs='+', default=_DEFAULT_PLUGINS, choices=PluginRegistry.available)
     parser.add_argument('--verbose', '-v', action='count', help='Increase the logging verbosity.', default=0)
     parser.add_argument('--version','-V', action='version', version=__VERSION__)
-    parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts. Defaults to 10', default=10, type=int)
+    parser.add_argument('--threads', '-t', help='Number of threads to use for retrieving hosts (default: %(default)s)', default=10, type=int)
     parser.add_argument('--list-plugins', '-lp', help='Lists plugins available.', action='store_true')
-    parser.add_argument('--formatter', '-ft', help='Formatter to use for output, default is console.', default='console', choices=FormattersRegistry.available)
-    parser.add_argument('--output', '-o', help='Output file to use, default is stdout.', type=FileType('w'), default='-', metavar='FILE')
-    parser.add_argument('--no-color',help='Outputs to console with no color. Default is False.', action='store_true', default=False)
-    parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on. Default is INFO.', metavar='SEVERITY', choices=Severity.all(), default=Severity.INFO)
+    parser.add_argument('--formatter', '-ft', help='Formatter to use for output (default: %(default)s).', default='console', choices=FormattersRegistry.available)
+    parser.add_argument('--output', '-o', help='Output file to use (default: stdout).', type=FileType('w'), default='-', metavar='FILE')
+    parser.add_argument('--no-color',help='Outputs to console with no color (default: %(default)s).', action='store_true', default=False)
+    parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on (default: INFO).', metavar='SEVERITY', choices=Severity.all(), default=Severity.INFO)
 
     # input from file
     file_parser = subparsers.add_parser('file')
