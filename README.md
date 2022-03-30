@@ -25,8 +25,9 @@ This should allow you to now use the application, of course you could forgo usin
 ## Usage
 
 ```
-usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}]
-                   [--output FILE] [--no-color] [--min-severity SEVERITY]
+usage: showdown.py [-h] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}] [--output FILE]
+                   [--no-color] [--min-severity SEVERITY]
+                   {file,net} ...
 
        
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
@@ -36,32 +37,44 @@ usage: showdown.py [-h] [--file FILE] [--network NETWORK] [--key-file KEY_FILE] 
 ███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
 ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
 
-    0.1.0 Mike Cromwell
+    1.0.0 Mike Cromwell
     Pull back juicy info on external targets from shodan!
 
 
 optional arguments:
   -h, --help            show this help message and exit
-  --file FILE, -f FILE  Hosts file, can be either hostname or IP address.
-  --network NETWORK, -n NETWORK
-                        Network range to search using CIDR notation (13.77.161.0/22); supports multiple.
   --key-file KEY_FILE, -kf KEY_FILE
                         Shodan API key file, if not provided then API key will be prompted for.
   --plugins PLUGIN [PLUGIN ...], -p PLUGIN [PLUGIN ...]
-                        Plugins to run, defaults to info vulns.
+                        Plugins to run (defaults: info vulns ssl http shares).
   --verbose, -v         Increase the logging verbosity.
   --version, -V         show program's version number and exit
   --threads THREADS, -t THREADS
-                        Number of threads to use for retrieving hosts. Defaults to 10
+                        Number of threads to use for retrieving hosts (default: 10)
   --list-plugins, -lp   Lists plugins available.
   --formatter {console,csv}, -ft {console,csv}
-                        Formatter to use for output, default is console.
+                        Formatter to use for output (default: console).
   --output FILE, -o FILE
-                        Output file to use, default is stdout.
-  --no-color            Outputs to console with no color. Default is False.
+                        Output file to use (default: stdout).
+  --no-color            Outputs to console with no color (default: False).
   --min-severity SEVERITY
-                        Minimum severity to report on. Default is INFO.
+                        Minimum severity to report on (default: INFO).
+
+Input mode:
+  {file,net}            Either from file or network address(es).
 ```
+
+Find findings rated medium or above from hosts in file `hosts.txt`, use shodan key file `shodan.key`:
+
+~~~ sh
+python3 showdown.py --min-severity MEDIUM --key-file shodan.key file hosts.txt
+~~~
+
+Find SSL/TLS findings in network `103.71.205.0/24` and prompt for API key:
+
+~~~ sh
+python3 showdown.py --plugins ssl net 103.71.205.0/24
+~~~
 
 ## Plugins
 
@@ -71,13 +84,21 @@ To create a new plugin:
 2. Implement the required class structure, for example:
 
 ```python
-from shared import AbstractPlugin, Severity
+from shared import AbstractPlugin, Severity, Finding
 
 class Plugin(AbstractPlugin):
 
     def process(self, host, output):
-        # retrieve cloud details
-        # populate using the output helper object
+        # populate using the output helper object, for example:
+        output.add_finding(Finding(
+                        'finding_key',
+                        val,
+                        'Summary',
+                        port,
+                        Severity.MEDIUM,
+                        proto
+                    ))
+        output.increase_score(50)
 
     @property
     def summary(self):
@@ -107,8 +128,7 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: Cloud
 - [X] Plugin: SSL
 - [X] Minium severity argument
+- [X] Plugin: HTTP
+- [ ] Plugin: Shares
 - [ ] Plugin: Interesting Ports
-- [ ] Plugin: Uncommon Ports
-- [ ] Plugin: HTML
-- [ ] Plugin: Screens
 - [ ] Wire up verbosity
