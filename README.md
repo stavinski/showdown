@@ -22,7 +22,12 @@ pip install -r requirements.txt
 
 This should allow you to now use the application, of course you could forgo using venv and just install the requirements globally.
 
+## Screencast
+
+[![Showdown in use](https://asciinema.org/a/482371.svg)](https://asciinema.org/a/482371)
+
 ## Usage
+
 
 ```
 usage: showdown.py [-h] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [--verbose] [--version] [--threads THREADS] [--list-plugins] [--formatter {console,csv}] [--output FILE]
