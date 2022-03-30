@@ -10,7 +10,7 @@ It uses a plugin model and comes with built-in plugins to that should give good 
 
 I would ussually recommend setting up a venv environment to not clobber other libraries, this can be done by installing venv using your package manager (i.e. `sudo apt install python3-venv`).
 
-Once this is done you can then clone the repo, setup venv, clone the repo and install the libraries from pip:
+Once this is done you can then clone the repo, setup venv and install the libraries from pip:
 
 ~~~
 git@github.com:stavinski/showdown.git
