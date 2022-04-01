@@ -134,6 +134,6 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: SSL
 - [X] Minium severity argument
 - [X] Plugin: HTTP
+- [X] Wire up verbosity
 - [ ] Plugin: Shares
 - [ ] Plugin: Interesting Ports
-- [ ] Wire up verbosity

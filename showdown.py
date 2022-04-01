@@ -7,6 +7,7 @@ from socket import gethostbyname_ex
 from argparse import ArgumentParser, FileType, RawDescriptionHelpFormatter
 from getpass import getpass
 from download import Downloader
+from logger import Log, LogLevel
 from shared import Pipeline, Severity
 from plugin import PluginRegistry
 from shodanapi import ShodanAPI
@@ -80,34 +81,37 @@ def ip_processed(has_details):
 
 
 def main(args):
+    log = Log(args.verbose)
     formatter_reg = FormattersRegistry(args)
     plugin_reg = PluginRegistry()
     pipeline = Pipeline()
     plugins = plugin_reg.retrieve_plugins(args.plugins)
 
-    print(__BANNER__)
-    print('[*] Starting up')
-    
+    if not args.no_banner:
+        print(__BANNER__)
+
+    log.write('[*] Starting up')
+
     api_key = get_api_key(args)
     ips = args.retrieve_ips(args)
     api = ShodanAPI(api_key)
-    print('[*] Testing shodan')
+    log.write('[*] Testing shodan', LogLevel.DEBUG)
     success, result = api.test()
     if success:
-        cprint("[*] Successful Shodan call.", 'green')
-        cprint(f"[*] {result}", 'blue')
+        log.write(colored("[*] Successful Shodan call.", 'green'), LogLevel.DEBUG)
+        log.write(colored(f"[*] {result}", 'blue'), LogLevel.VERBOSE)
     else:
         raise SystemExit(colored(f"[!] Error calling Shodan: '{result}'.", 'red'))
 
-    print(f"[+] IPs: {' '.join(ips)}")
-    print(f"[+] Plugins: {' '.join(args.plugins)}")
+    log.write(f"[+] IPs: {' '.join(ips)}")
+    log.write(f"[+] Plugins: {' '.join(args.plugins)}")
 
     for plugin in plugins:
         pipeline.register(plugin)
 
-    cprint('[+] Details', 'green', end=' ')
-    cprint('[-] No details', 'red')
-    print(f"[+] Processing {len(ips)} hosts: ", end='', flush=True)
+    log.write(colored('[+] Details', 'green'), end=' ')
+    log.write(colored('[-] No details', 'red'))
+    log.write(f"[+] Processing {len(ips)} hosts: ", end='', flush=True)
 
     downloader = Downloader(api, args.threads, ips)
     hosts = downloader.download(processed_callback=ip_processed)
@@ -115,7 +119,7 @@ def main(args):
 
     # no details for any of the hosts, nothing more to do!
     if not hosts:
-        cprint('[!] No hosts with details', 'red')
+        log.write(colored('[!] No hosts with details', 'red'))
         return
 
     # process the hosts through the plugins
@@ -128,7 +132,7 @@ def main(args):
         for ip, host in output.items():
             formatter.format(ip, host)
             
-    cprint('[*] Done.', 'green')
+    log.write(colored('[*] Done.', 'green'))
 
 
 if __name__ == '__main__':   
@@ -146,6 +150,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', help='Output file to use (default: stdout).', type=FileType('w'), default='-', metavar='FILE')
     parser.add_argument('--no-color',help='Outputs to console with no color (default: %(default)s).', action='store_true', default=False)
     parser.add_argument('--min-severity', type=Severity.from_name, help='Minimum severity to report on (default: INFO).', metavar='SEVERITY', choices=Severity.all(), default=Severity.INFO)
+    parser.add_argument('--no-banner', '-nb', action='store_true', default=False, help='Prevents the banner from being displayed.')
 
     # input from file
     file_parser = subparsers.add_parser('file')
