@@ -166,8 +166,8 @@ class Plugin(AbstractPlugin):
 - [X] Minium severity argument
 - [X] Plugin: HTTP
 - [X] Wire up verbosity
+- [X] Docker support
 - [ ] Plugin: Files
 - [ ] Plugin: SSH
 - [ ] Plugin: GUI
 - [ ] Plugin: Interesting Ports
-- [ ] Docker support
