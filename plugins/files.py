@@ -42,4 +42,4 @@ class Plugin(AbstractPlugin):
 
     @property
     def summary(self):
-        return 'Details gained from shares such as SMB/NFS.'
+        return 'Details of any files found, such as FTP or SMB.'
