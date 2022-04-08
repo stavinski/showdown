@@ -81,6 +81,22 @@ Find SSL/TLS findings in network `103.71.205.0/24` and prompt for API key:
 python3 showdown.py --plugins ssl net 103.71.205.0/24
 ~~~
 
+## Docker
+
+Showdown can be ran in a docker container, simply clone the repo and build the docker image:
+
+~~~sh
+git@github.com:stavinski/showdown.git
+cd showdown
+docker build -t showdown .
+~~~
+
+The docker image can then be ran by providing the arguments as usual:
+
+~~~sh
+docker run showdown --help
+~~~
+
 ## Plugins
 
 To create a new plugin:
@@ -139,3 +155,4 @@ class Plugin(AbstractPlugin):
 - [ ] Plugin: SSH
 - [ ] Plugin: GUI
 - [ ] Plugin: Interesting Ports
+- [ ] Docker support
