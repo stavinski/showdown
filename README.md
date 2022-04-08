@@ -83,7 +83,13 @@ python3 showdown.py --plugins ssl net 103.71.205.0/24
 
 ## Docker
 
-Showdown can be ran in a docker container, simply clone the repo and build the docker image:
+Showdown can be ran in a docker container either by pulling from the docker hub:
+
+~~~sh
+docker pull stavinski/showdown
+~~~
+
+or cloning the repo and build the docker image:
 
 ~~~sh
 git@github.com:stavinski/showdown.git
