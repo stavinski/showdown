@@ -112,6 +112,14 @@ The docker image can then be ran by providing the arguments as usual:
 docker run showdown --help
 ~~~
 
+You can also allow access to the host filesystem, for either providing the Shodan API key or for saving results by providing a volume:
+
+~~~sh
+docker run --rm -v ~/scratch:/app showdown --output shodan.txt --key-file shodan.key net 114.32.236.74
+~~~
+
+This will both pickup the `shodan.key` key file and save output to `~/scratch`.
+
 ## Plugins
 
 To create a new plugin:
