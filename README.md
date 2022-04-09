@@ -167,7 +167,8 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: HTTP
 - [X] Wire up verbosity
 - [X] Docker support
-- [ ] Plugin: Files
+- [X] Plugin: Files
 - [ ] Plugin: SSH
 - [ ] Plugin: GUI
+- [ ] Plugin: DB
 - [ ] Plugin: Interesting Ports
