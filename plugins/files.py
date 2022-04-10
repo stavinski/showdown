@@ -67,7 +67,6 @@ class Plugin(AbstractPlugin):
                 Severity.INFO,
                 data['transport']
             ))
-        output.increase_score(20)
 
         uams = afp.get('uams', [])
         for uam in uams:
