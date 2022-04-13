@@ -177,6 +177,7 @@ class Plugin(AbstractPlugin):
 - [X] Docker support
 - [X] Plugin: Files
 - [X] Plugin: SSH
-- [ ] Plugin: GUI
+- [X] Plugin: End of Life
 - [ ] Plugin: DB
+- [ ] Plugin: Queues
 - [ ] Plugin: Interesting Ports
