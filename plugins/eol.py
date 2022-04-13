@@ -151,4 +151,4 @@ class Plugin(AbstractPlugin):
 
     @property
     def summary(self):
-        return ''
+        return 'Check for End of Life / End of Support products.'
