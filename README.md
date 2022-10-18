@@ -5,7 +5,8 @@
   * [Screencast](#screencast)
   * [Usage](#usage)
   * [Docker](#docker)
-  * [Plugins](#plugins)
+  * [Built-in Plugins](#built-in-plugins)
+  * [Developing a new Plugin](#developing-a-new-plugin)
   * [FAQs](#faqs)
   * [TODO](#todo)
 
@@ -120,9 +121,19 @@ docker run --rm -v ~/scratch:/app showdown --output shodan.txt --key-file shodan
 
 This will both pickup the `shodan.key` key file and save output to `~/scratch`.
 
-## Plugins
+## Built-in Plugins
 
-To create a new plugin:
+* cloud
+* db
+* eol
+* files
+* http
+* info
+* ssh
+* ssl
+* vulns
+
+## Developing a new Plugin
 
 1. Create a new python file inside of the `plugins` directory (no spaces) this will act as the name so suggest a short name to convey what will be parsed such as `cloud.py`.
 2. Implement the required class structure, for example:
