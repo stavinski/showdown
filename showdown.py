@@ -14,7 +14,7 @@ from shodanapi import ShodanAPI
 from formatters import FormattersRegistry
 
 
-__VERSION__ = '1.0.0'
+__VERSION__ = '1.1.1'
 __AUTHOR__ = 'Mike Cromwell'
 __LOGO__ = colored("""       
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
