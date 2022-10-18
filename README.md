@@ -178,6 +178,5 @@ class Plugin(AbstractPlugin):
 - [X] Plugin: Files
 - [X] Plugin: SSH
 - [X] Plugin: End of Life
-- [ ] Plugin: DB
+- [X] Plugin: DB
 - [ ] Plugin: Queues
-- [ ] Plugin: Interesting Ports
