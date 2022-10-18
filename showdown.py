@@ -31,7 +31,7 @@ __BANNER__ += colored("""Pull back juicy info on external targets from shodan!
 """, 'green')
 
 
-_DEFAULT_PLUGINS = ['info', 'vulns', 'ssl', 'http', 'files', 'eol']
+_DEFAULT_PLUGINS = ['info', 'vulns', 'ssl', 'http', 'files', 'eol', 'db']
 
 def get_api_key(args):
     if args.key_file:
