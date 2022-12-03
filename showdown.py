@@ -113,8 +113,8 @@ def main(args):
     log.write(colored('[-] No details', 'red'))
     log.write(f"[+] Processing {len(ips)} hosts: ", end='', flush=True)
 
-    downloader = Downloader(api, args.threads, ips)
-    hosts = downloader.download(processed_callback=ip_processed)
+    downloader = Downloader(api, args.threads, ips, processed_callback=ip_processed)
+    hosts = downloader.download()
     print()
 
     # no details for any of the hosts, nothing more to do!

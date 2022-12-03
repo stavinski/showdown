@@ -5,7 +5,7 @@ from time import sleep
 
 class Downloader(object):
     
-    def __init__(self, api, thread_count, ips, delay=1):
+    def __init__(self, api, thread_count, ips, delay=1, processed_callback=lambda _: None):
         self.lock = Lock()
         self.api = api
         self.thread_count = thread_count
@@ -14,13 +14,15 @@ class Downloader(object):
         self.queue = Queue(len(ips))
         self.threads = []
         self.results = []
+        self._start_threads(processed_callback)
 
-    def download(self, processed_callback=lambda _: None):
+    def _start_threads(self,processed_callback):
         for count in range(0, self.thread_count):
             thread = Thread(target=self._download_host, name=f'downloader-{count}', args=(processed_callback,))
             thread.setDaemon(True)
             thread.start()
 
+    def download(self):
         for ip in self.ips:
             self.queue.put(ip)
             sleep(self.delay)  # shodan API is rate limited so requires a delay between reqs
