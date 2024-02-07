@@ -52,7 +52,7 @@ usage: showdown.py [-h] [--key-file KEY_FILE] [--plugins PLUGIN [PLUGIN ...]] [-
 ███████║██║  ██║╚██████╔╝╚███╔███╔╝██████╔╝╚██████╔╝╚███╔███╔╝██║ ╚████║
 ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝
 
-    1.0.0 Mike Cromwell
+    1.0.0 Mike Nicholls
     Pull back juicy info on external targets from shodan!
 
 

@@ -15,7 +15,7 @@ from formatters import FormattersRegistry
 
 
 __VERSION__ = '1.1.1'
-__AUTHOR__ = 'Mike Cromwell'
+__AUTHOR__ = 'Mike Nicholls'
 __LOGO__ = colored("""       
 ███████╗██╗  ██╗ ██████╗ ██╗    ██╗██████╗  ██████╗ ██╗    ██╗███╗   ██╗
 ██╔════╝██║  ██║██╔═══██╗██║    ██║██╔══██╗██╔═══██╗██║    ██║████╗  ██║
